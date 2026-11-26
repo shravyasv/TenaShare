@@ -73,15 +73,28 @@ def login_required(view):
 @app.route("/")
 def index():
     db = get_db()
-    donations = db.execute("""
+    search = request.args.get("search", "").strip()
+
+    donations = db.execute(
+        """
         SELECT donations.*, users.name AS donor_name
         FROM donations
         JOIN users ON users.id = donations.user_id
         WHERE donations.status = 'Available'
+        AND (
+            donations.food_name LIKE ?
+            OR donations.pickup_location LIKE ?
+        )
         ORDER BY donations.created_at DESC
-    """).fetchall()
+        """,
+        (f"%{search}%", f"%{search}%")
+    ).fetchall()
 
-    return render_template("index.html", donations=donations)
+    return render_template(
+        "index.html",
+        donations=donations,
+        search=search
+    )
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -150,6 +163,7 @@ def login():
 @login_required
 def dashboard():
     db = get_db()
+    user_id = session["user_id"]
 
     donations = db.execute(
         """
@@ -157,18 +171,27 @@ def dashboard():
         WHERE user_id = ?
         ORDER BY created_at DESC
         """,
-        (session["user_id"],)
+        (user_id,)
     ).fetchall()
+
+    stats = db.execute(
+        """
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN status = 'Available' THEN 1 ELSE 0 END) AS available,
+            SUM(CASE WHEN status = 'Collected' THEN 1 ELSE 0 END) AS collected,
+            SUM(CASE WHEN status = 'Cancelled' THEN 1 ELSE 0 END) AS cancelled
+        FROM donations
+        WHERE user_id = ?
+        """,
+        (user_id,)
+    ).fetchone()
 
     return render_template(
         "dashboard.html",
-        donations=donations
+        donations=donations,
+        stats=stats
     )
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("You have been logged out.")
-    return redirect(url_for("index"))
 @app.route("/donations/new", methods=["GET", "POST"])
 @login_required
 def new_donation():
@@ -254,51 +277,37 @@ def admin():
     ).fetchall()
 
     return render_template("admin.html", donations=donations)
-@app.route("/admin")
+@app.route("/donations/<int:donation_id>/reopen", methods=["POST"])
 @login_required
-def admin():
+def reopen_donation(donation_id):
     db = get_db()
 
-    user = db.execute(
-        "SELECT email FROM users WHERE id = ?",
-        (session["user_id"],)
+    donation = db.execute(
+        "SELECT * FROM donations WHERE id = ?",
+        (donation_id,)
     ).fetchone()
 
-    if user["email"] != os.environ.get("TENASSHARE_ADMIN_EMAIL"):
-        flash("Access denied. Admin only.")
+    if donation is None:
+        flash("Donation not found.")
         return redirect(url_for("dashboard"))
 
-    donations = db.execute(
-        """
-        SELECT donations.*, users.name AS donor_name
-        FROM donations
-        JOIN users ON users.id = donations.user_id
-        ORDER BY donations.created_at DESC
-        """
-    ).fetchall()
-
-    return render_template("admin.html", donations=donations)
-@app.route("/admin")
-@login_required
-def admin():
-    db = get_db()
-
-    user = db.execute(
-        "SELECT email FROM users WHERE id = ?",
-        (session["user_id"],)
-    ).fetchone()
-
-    if user["email"] != os.environ.get("TENASSHARE_ADMIN_EMAIL"):
-        flash("Access denied. Admin only.")
+    if donation["user_id"] != session["user_id"]:
+        flash("You can only reopen your own donations.")
         return redirect(url_for("dashboard"))
 
-    donations = db.execute(
-        """
-        SELECT donations.*, users.name AS donor_name
-        FROM donations
-        JOIN users ON users.id = donations.user_id
-        ORDER BY donations.created_at DESC
-        """
-    ).fetchall()
+    if donation["status"] != "Cancelled":
+        flash("Only cancelled donations can be reopened.")
+        return redirect(url_for("dashboard"))
 
-    return render_template("admin.html", donations=donations)
+    db.execute(
+        "UPDATE donations SET status = 'Available' WHERE id = ?",
+        (donation_id,)
+    )
+
+    db.commit()
+
+    flash("Donation reopened successfully!")
+    return redirect(url_for("dashboard"))
+if __name__ == "__main__":
+    init_db()
+    app.run(debug=True)
