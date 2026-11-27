@@ -12,13 +12,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 BASE_DIR = Path(__file__).resolve().parent
 DATABASE = BASE_DIR / "tenasshare.db"
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=str(BASE_DIR / "templates"))
+print("PROJECT PATH:", BASE_DIR)
+print("TEMPLATE PATH:", app.template_folder)
+print("INDEX EXISTS:", (BASE_DIR / "templates" / "index.html").exists())
+print("TEMPLATE FILES:", list((BASE_DIR / "templates").glob("*")))
 app.config["SECRET_KEY"] = os.environ.get(
     "TENASSHARE_SECRET_KEY",
     "dev-only-change-this-secret"
 )
-
-
 def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(DATABASE)
@@ -94,6 +96,25 @@ def index():
         "index.html",
         donations=donations,
         search=search
+    )
+@app.route("/donations")
+@login_required
+def donations():
+    db = get_db()
+
+    donations = db.execute(
+        """
+        SELECT donations.*, users.name AS donor_name
+        FROM donations
+        JOIN users ON users.id = donations.user_id
+        WHERE donations.status = 'Available'
+        ORDER BY donations.created_at DESC
+        """
+    ).fetchall()
+
+    return render_template(
+        "donation.html",
+        donations=donations
     )
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -257,7 +278,6 @@ def donation_detail(donation_id):
 @login_required
 def admin():
     db = get_db()
-
     user = db.execute(
         "SELECT email FROM users WHERE id = ?",
         (session["user_id"],)
