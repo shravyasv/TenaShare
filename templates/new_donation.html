@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate Food - TenasShare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🍲 TenasShare</h1>
+    <p>Share Food, Share Hope</p>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <form method="POST">
+        <h2>Donate Food ❤️</h2>
+        <p style="text-align:center;">Fill in the details of the food you want to share.</p>
+
+        <input type="text" name="food_name" placeholder="Food name" required>
+
+        <input type="text" name="quantity" placeholder="Quantity (e.g. 20 meals, 5 kg)" required>
+
+        <select name="food_type" required>
+            <option value="">Select food type</option>
+            <option value="Cooked Food">Cooked Food</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Bakery">Bakery Items</option>
+            <option value="Packaged Food">Packaged Food</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <input type="text" name="location" placeholder="Pickup location" required>
+
+        <input type="datetime-local" name="pickup_time" required>
+
+        <textarea name="description" placeholder="Additional details (optional)" rows="4"></textarea>
+
+        <button type="submit" style="width:100%;">Submit Donation</button>
+
+        <p style="text-align:center; margin-top:15px;">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        </p>
+    </form>
+</main>
+
+<footer>
+    <p>© 2026 TenasShare | Every meal matters.</p>
+</footer>
+
+</body>
+</html>
