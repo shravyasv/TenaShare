@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenasShare - Share Food, Share Hope</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h1>🍲 TenasShare</h1>
+        <p>Share Food, Share Hope</p>
+
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        </nav>
+    </header>
+
+    <main class="hero">
+        <h2>Don't Waste Food. Share It.</h2>
+        <p>
+            Connect people who have surplus food with those who need it.
+            Every meal shared makes a difference.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{{ url_for('register') }}" class="btn">Get Started</a>
+            <a href="{{ url_for('login') }}" class="btn">Login</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 TenasShare | Together, we can reduce food waste.</p>
+    </footer>
+
+</body>
+</html>
