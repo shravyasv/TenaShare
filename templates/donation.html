@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Donations - TenasShare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🍲 TenasShare</h1>
+    <p>Share Food, Share Hope</p>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('new_donation') }}">Donate Food</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+
+    <h2>Food Donations ❤️</h2>
+    <p>Discover food shared by people in your community.</p>
+
+    <div style="margin: 20px 0;">
+        <a href="{{ url_for('new_donation') }}" class="btn">
+            + Donate Food
+        </a>
+    </div>
+
+    {% if donations %}
+
+        {% for donation in donations %}
+            <div class="donation-card">
+
+                <h3>{{ donation.food_name }}</h3>
+
+                <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+
+                <p><strong>Donor:</strong> {{ donation.donor_name }}</p>
+
+                <p><strong>Pickup Location:</strong> {{ donation.pickup_location }}</p>
+
+                <p><strong>Pickup Time:</strong> {{ donation.pickup_time }}</p>
+
+                <p><strong>Status:</strong> {{ donation.status }}</p>
+
+                <a href="{{ url_for('donation_details', donation_id=donation.id) }}"
+                   class="btn">
+                    View Details
+                </a>
+
+            </div>
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card">
+            <h3>No donations found.</h3>
+            <p>Be the first to share food and make a difference! 💚</p>
+        </div>
+
+    {% endif %}
+
+</main>
+
+<footer>
+    <p>© 2026 TenasShare | Every meal matters.</p>
+</footer>
+
+</body>
+</html>
