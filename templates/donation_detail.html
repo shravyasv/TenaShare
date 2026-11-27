@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Details - TenasShare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🍲 TenasShare</h1>
+    <p>Share Food, Share Hope</p>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('donations') }}">Donations</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+    <div class="donation-card">
+        <h2>{{ donation.food_name }}</h2>
+
+        <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+        <p><strong>Food Type:</strong> {{ donation.food_type }}</p>
+        <p><strong>Location:</strong> {{ donation.location }}</p>
+        <p><strong>Pickup Time:</strong> {{ donation.pickup_time }}</p>
+        <p><strong>Description:</strong> {{ donation.description or 'No additional details' }}</p>
+        <p><strong>Status:</strong> {{ donation.status }}</p>
+
+        <hr style="margin:20px 0;">
+
+        {% if donation.status == 'Available' %}
+            <form method="POST">
+                <button type="submit">Collect This Food</button>
+            </form>
+        {% else %}
+            <p>This donation has already been collected.</p>
+        {% endif %}
+
+        <p style="margin-top:20px;">
+            <a href="{{ url_for('donations') }}">← Back to Donations</a>
+        </p>
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 TenasShare | Every meal matters.</p>
+</footer>
+
+</body>
+</html>
