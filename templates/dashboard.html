@@ -1,0 +1,34 @@
+<div class="stats-container">
+
+    <div class="stat-card">
+        <h3>Total Donations</h3>
+        <p>{{ stats.total }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Available</h3>
+        <p>{{ stats.available or 0 }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Collected</h3>
+        <p>{{ stats.collected or 0 }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Cancelled</h3>
+        <p>{{ stats.cancelled or 0 }}</p>
+    </div>
+
+</div>
+<div class="dashboard-actions">
+
+    <a href="{{ url_for('new_donation') }}" class="btn">
+        Donate Food
+    </a>
+
+    <a href="{{ url_for('donations') }}" class="btn">
+        Browse Donations
+    </a>
+
+</div>
