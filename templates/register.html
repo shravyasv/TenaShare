@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TenasShare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <h1>🍲 TenasShare</h1>
+    <p>Share Food, Share Hope</p>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('login') }}">Login</a>
+    </nav>
+</header>
+
+<main>
+    <form method="POST" action="{{ url_for('register') }}">
+        <h2>Create Account ❤️</h2>
+        <p style="text-align:center;">Join us in reducing food waste</p>
+
+        <input type="text" name="name" placeholder="Full name" required>
+
+        <input type="email" name="email" placeholder="Email address" required>
+
+        <input type="password" name="password" placeholder="Create password" required minlength="6">
+
+        <input type="password" name="confirm_password" placeholder="Confirm password" required minlength="6">
+
+        <button type="submit" style="width:100%;">Register</button>
+
+        <p style="text-align:center; margin-top:15px;">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login</a>
+        </p>
+    </form>
+</main>
+
+<footer>
+    <p>© 2026 TenasShare | Every meal matters.</p>
+</footer>
+
+</body>
+</html>
