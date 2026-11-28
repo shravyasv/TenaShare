@@ -99,7 +99,7 @@ def index():
     )
 @app.route("/donations")
 @login_required
-def donations():
+def donation():
     db = get_db()
 
     donations = db.execute(
@@ -251,7 +251,7 @@ def new_donation():
         flash("Food donation posted successfully!")
         return redirect(url_for("dashboard"))
 
-    return render_template("donations/new_donation.html")
+    return render_template("new_donation.html")
 @app.route("/donations/<int:donation_id>")
 def donation_detail(donation_id):
     db = get_db()
